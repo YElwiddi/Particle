@@ -26,11 +26,11 @@ public class Experience : MonoBehaviour
     private void LevelUp()
     {
         experiencePoints = 0; // Reset experience points after leveling up.
-        maxExperience *= 2; // Double the maximum experience for the next level.
+        //maxExperience *= 2; // Double the maximum experience for the next level.
         currentLevel++;
 
         // Add any additional logic for level-up effects or actions here.
-        Debug.Log($"Level up! New level: {currentLevel}");
+        // Debug.Log($"Level up! New level: {currentLevel}");
     }
 
     public int GetExperience()
