@@ -7,8 +7,10 @@ public class Experience : MonoBehaviour
 {
 
     [SerializeField] GameObject mainCanvasObj;
+    [SerializeField] Camera mainCamera;
     [SerializeField] GameObject uiPrefab1;
     [SerializeField] GameObject uiPrefab2;
+    [SerializeField] GameObject uiPrefabLvlUp;
 
     private int experiencePoints = 0;
     private int maxExperience = 100; // Set your maximum experience value.
@@ -47,17 +49,17 @@ public class Experience : MonoBehaviour
 
         // Instantiate the UI prefabs at the calculated position
         //GameObject uiInstance1 = Instantiate(uiPrefab1, spawnPosition, Quaternion.identity);
-        GameObject uiInstance1 = Instantiate(uiPrefab1, new Vector3(-5f, 0f, 0f), Quaternion.identity);
-        GameObject uiInstance2 = Instantiate(uiPrefab2, new Vector3(10f, 10f, 0f), Quaternion.identity);
+        Vector3 pos = Camera.main.transform.TransformPoint(Vector3.forward * distanceFromCamera);
 
-        Debug.Log("Position of uiInstance1: " + uiInstance1.transform.position);
-        Debug.Log("Position of uiInstance2: " + uiInstance2.transform.position);
+        // Instantiating the UI elements
+        GameObject uiInstance1 = Instantiate(uiPrefab1, new Vector3(-250f, -100, 0f), Quaternion.identity);
+        GameObject uiInstance2 = Instantiate(uiPrefab2, new Vector3(50, -100, 0f), Quaternion.identity);
+        GameObject uiInstanceLvlUp = Instantiate(uiPrefabLvlUp, new Vector3(-175f, -275f, 0f), Quaternion.identity);
+
         // Setting the UI canvas to be the parent of the UI prefabs
         uiInstance1.transform.SetParent(mainCanvasObj.transform, false);
         uiInstance2.transform.SetParent(mainCanvasObj.transform, false);
-
-
-
+        uiInstanceLvlUp.transform.SetParent(mainCanvasObj.transform, false);
 
         // Pause the game
         Time.timeScale = 0f;
