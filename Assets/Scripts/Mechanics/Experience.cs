@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using Platformer.Mechanics;
 
 public class Experience : MonoBehaviour
 {
@@ -11,13 +13,17 @@ public class Experience : MonoBehaviour
     [SerializeField] GameObject uiPrefab1;
     [SerializeField] GameObject uiPrefab2;
     [SerializeField] GameObject uiPrefabLvlUp;
-
+    [SerializeField] PlayerController playerController;
     private int experiencePoints = 0;
     private int maxExperience = 100; // Set your maximum experience value.
     private int currentLevel = 1;
-    public float distanceFromCamera = 5f; // Adjust this distance as needed
+    private int distanceFromCamera = 5;
 
-
+    private void Start()
+    {
+        // Get a reference to the PlayerController script attached to the same GameObject
+        playerController = GetComponent<PlayerController>();
+    }
 
     public void IncrementExperience(int amount)
     {
@@ -29,14 +35,12 @@ public class Experience : MonoBehaviour
             LevelUp();
         }
 
-        // You can add any additional logic here, such as checking for level-up conditions.
-        Debug.Log($"Experience increased by {amount}. Total experience: {experiencePoints}");
     }
 
     private void LevelUp()
     {
         experiencePoints = 0; // Reset experience points after leveling up.
-        //maxExperience *= 2; // Double the maximum experience for the next level.
+        maxExperience += 20; // Increase the amount of XP needed to level up
         currentLevel++;
 
         // Add any additional logic for level-up effects or actions here.
@@ -61,26 +65,61 @@ public class Experience : MonoBehaviour
         uiInstance2.transform.SetParent(mainCanvasObj.transform, false);
         uiInstanceLvlUp.transform.SetParent(mainCanvasObj.transform, false);
 
+        // Add a clickable event to the UI element
+        // Hard coding for now, can add if statement to check what uiInstance was passed in the ResumeGame method later
+        AddClickEvent(uiInstance1, () => ResumeGameJump(uiInstance1, uiInstance2, uiInstanceLvlUp));
+        AddClickEvent(uiInstance2, () => ResumeGameMove(uiInstance1, uiInstance2, uiInstanceLvlUp));
+
         // Pause the game
         Time.timeScale = 0f;
 
-        // Add any logic for the options (e.g., button click events) here
+    }
 
-        // Example: Resume game when an option is selected
-        uiPrefab1.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
-        uiPrefab2.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
+    private void AddClickEvent(GameObject clickableObject, UnityEngine.Events.UnityAction clickAction)
+    {
+        // Add an EventTrigger component if it doesn't exist
+        EventTrigger eventTrigger = clickableObject.GetComponent<EventTrigger>();
+        if (eventTrigger == null)
+        {
+            eventTrigger = clickableObject.AddComponent<EventTrigger>();
+        }
+
+        // Add a PointerClick event trigger
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerClick;
+        entry.callback.AddListener((data) => { clickAction.Invoke(); });
+
+        // Add the event to the trigger
+        eventTrigger.triggers.Add(entry);
     }
 
 
-
-
-    private void ResumeGame()
+    private void ResumeGameMove(GameObject UIPrefab1, GameObject UIPrefab2, GameObject UIPrefab3)
     {
+        // Increase movement speed by 20%
+        playerController.maxSpeed = (playerController.maxSpeed * 1.2f);
+
         // Unpause the game
         Time.timeScale = 1f;
 
         // Destroy UI elements
-        Destroy(GameObject.FindWithTag("OptionUI")); // Assuming you set a tag for your UI elements
+        Destroy(UIPrefab1); 
+        Destroy(UIPrefab2); 
+        Destroy(UIPrefab3); 
+    }
+
+        private void ResumeGameJump(GameObject UIPrefab1, GameObject UIPrefab2, GameObject UIPrefab3)
+    {
+        // Increase jump power by 20%
+        playerController.jumpTakeOffSpeed = (playerController.jumpTakeOffSpeed * 1.2f);
+
+        // Unpause the game
+        Time.timeScale = 1f;
+
+        // Destroy UI elements
+        Destroy(UIPrefab1); 
+        Destroy(UIPrefab2); 
+        Destroy(UIPrefab3); 
     }
 
     public int GetExperience()
