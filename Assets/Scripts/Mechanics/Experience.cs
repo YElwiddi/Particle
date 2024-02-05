@@ -67,8 +67,8 @@ public class Experience : MonoBehaviour
         // Add any logic for the options (e.g., button click events) here
 
         // Example: Resume game when an option is selected
-        //option1UI.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
-        //option2UI.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
+        uiPrefab1.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
+        uiPrefab2.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
     }
 
 
