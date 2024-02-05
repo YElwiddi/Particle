@@ -5,9 +5,17 @@ using UnityEngine.UI;
 
 public class Experience : MonoBehaviour
 {
+
+    [SerializeField] GameObject mainCanvasObj;
+    [SerializeField] GameObject uiPrefab1;
+    [SerializeField] GameObject uiPrefab2;
+
     private int experiencePoints = 0;
     private int maxExperience = 100; // Set your maximum experience value.
     private int currentLevel = 1;
+    public float distanceFromCamera = 5f; // Adjust this distance as needed
+
+
 
     public void IncrementExperience(int amount)
     {
@@ -31,6 +39,46 @@ public class Experience : MonoBehaviour
 
         // Add any additional logic for level-up effects or actions here.
         // Debug.Log($"Level up! New level: {currentLevel}");
+
+
+        // Calculate the position relative to the camera
+        Vector3 cameraPosition = Camera.main.transform.position;
+        Vector3 spawnPosition = cameraPosition + Camera.main.transform.forward * distanceFromCamera;
+
+        // Instantiate the UI prefabs at the calculated position
+        //GameObject uiInstance1 = Instantiate(uiPrefab1, spawnPosition, Quaternion.identity);
+        GameObject uiInstance1 = Instantiate(uiPrefab1, new Vector3(-5f, 0f, 0f), Quaternion.identity);
+        GameObject uiInstance2 = Instantiate(uiPrefab2, new Vector3(10f, 10f, 0f), Quaternion.identity);
+
+        Debug.Log("Position of uiInstance1: " + uiInstance1.transform.position);
+        Debug.Log("Position of uiInstance2: " + uiInstance2.transform.position);
+        // Setting the UI canvas to be the parent of the UI prefabs
+        uiInstance1.transform.SetParent(mainCanvasObj.transform, false);
+        uiInstance2.transform.SetParent(mainCanvasObj.transform, false);
+
+
+
+
+        // Pause the game
+        Time.timeScale = 0f;
+
+        // Add any logic for the options (e.g., button click events) here
+
+        // Example: Resume game when an option is selected
+        //option1UI.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
+        //option2UI.GetComponent<Button>().onClick.AddListener(() => ResumeGame());
+    }
+
+
+
+
+    private void ResumeGame()
+    {
+        // Unpause the game
+        Time.timeScale = 1f;
+
+        // Destroy UI elements
+        Destroy(GameObject.FindWithTag("OptionUI")); // Assuming you set a tag for your UI elements
     }
 
     public int GetExperience()
